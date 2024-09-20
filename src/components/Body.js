@@ -7,7 +7,6 @@ import useOnlineStatus from "../utils/useOnlineStatus";
 const Body = () => {
   const [listOfRestaurants, setlistOfRestaurants] = useState([]);
   const [filteredRestaurant, setfilteredRestaurant] = useState([]);
-
   const [searchText, setsearchText] = useState("");
 
   useEffect(() => {
@@ -34,48 +33,56 @@ const Body = () => {
       <h1>Looks like you're offline!! Please check your internet connection</h1>
     );
 
-  //conditional rendering
+  // Conditional rendering
   return listOfRestaurants.length === 0 ? (
     <Shimmer />
   ) : (
     <div className="body bg-[#E5E5E5]">
-      <div className="flex flex-wrap mx-2 ">
-        <div className=" m-4 p-4">
+      <div className="flex flex-col items-start mx-2 mb-4">
+        <div className="flex items-center mb-2">
           <input
             type="text"
-            className="border border-solid border-black"
+            className="border border-solid border-black text-xs px-2 py-1 w-64"
             value={searchText}
+            placeholder="Search Cuisines or Restaurants"
             onChange={(e) => {
               setsearchText(e.target.value);
             }}
           />
           <button
-          className=" px-2 py-1 m-1 bg-[#bfad9d] rounded-md shadow-lg hover:bg-[#b4977f]"
+            className="px-2 mx-1 bg-[#bfad9d] rounded-md shadow-lg hover:bg-[#b4977f]"
             onClick={() => {
-              const filteredRestaurant = listOfRestaurants.filter((res) =>
-                res.info.name.toLowerCase().includes(searchText.toLowerCase())
-              );
+              const filteredRestaurant = listOfRestaurants.filter((res) => {
+                const nameMatches = res.info.name
+                  .toLowerCase()
+                  .includes(searchText.toLowerCase());
+
+                const cuisinesMatches = res.info.cuisines.some((cuisine) =>
+                  cuisine.toLowerCase().includes(searchText.toLowerCase())
+                );
+
+                return nameMatches || cuisinesMatches; // Matches either name or cuisine
+              });
+
               setfilteredRestaurant(filteredRestaurant);
             }}
           >
             Search
           </button>
-        </div>
-        <div className="flex items-center">
-        <button
-          className=" px-2 py-1 m-0 bg-[#bfad9d] rounded-md shadow-lg hover:bg-[#b4977f]"
-          onClick={() => {
-            const filteredlist = listOfRestaurants.filter(
-              (res) => res.info.avgRating > 4.3
-            );
-            setfilteredRestaurant(filteredlist);
-          }}
-        >
-          Top Rated Restaurants
-        </button>
+          <button
+            className="px-2 bg-[#bfad9d] rounded-md shadow-lg hover:bg-[#b4977f] mx-1"
+            onClick={() => {
+              const filteredlist = listOfRestaurants.filter(
+                (res) => res.info.avgRating > 4.3
+              );
+              setfilteredRestaurant(filteredlist);
+            }}
+          >
+            Top Rated Restaurants
+          </button>
         </div>
       </div>
-      <div className="flex flex-wrap justify-around gap-8 ">
+      <div className="flex flex-wrap justify-around gap-8">
         {filteredRestaurant.map((restaurant) => (
           <Link
             key={restaurant.info.id}
@@ -88,4 +95,5 @@ const Body = () => {
     </div>
   );
 };
+
 export default Body;
