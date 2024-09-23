@@ -2,9 +2,13 @@ import logo from "../images/foodlogo.png";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useOnlineStatus from "../utils/useOnlineStatus";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const onlineStatus = useOnlineStatus();
+  
+  //suscribing to store using selector
+  const cartItems=useSelector((store)=> store.cart.items);
 
   return (
     <div className="flex justify-between bg-[#CCCCCC] shadow-lg m-2 rounded-md">
@@ -20,10 +24,12 @@ const Header = () => {
           <li className="px-3">
             <Link to="/about">About us</Link>
           </li>
-          <li className="px-3">
+          <li className="px-3 ">
             <Link to="/contact">Contact Us</Link>
           </li>
-          <li className="px-3">Cart</li>
+          <li className="px-3 font-bold cursor-pointer ">
+          <Link to="/cart">Cart-({cartItems.length})</Link>
+          </li>
         </ul>
       </div>
     </div>

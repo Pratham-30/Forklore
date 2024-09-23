@@ -1,10 +1,39 @@
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { CDN_URL } from "../utils/constants";
-const ItemList = ({ items, dummy }) => {
+import { addItem } from "../utils/cartSlice";
+
+const ItemList = ({ items }) => {
+  const dispatch = useDispatch();
+
+  // State to manage popup visibility
+  const [showPopup, setShowPopup] = useState(false);
+
+  // Function to handle adding items and showing popup
+  const handleAddItem = (item) => {
+    dispatch(addItem(item));
+
+    // Show popup
+    setShowPopup(true);
+
+    // Hide popup after 2 seconds
+    setTimeout(() => {
+      setShowPopup(false);
+    }, 2000);
+  };
+
   return (
     <div>
-      {items.map((item) => (
+      {/* Popup message */}
+      {showPopup && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white p-2 rounded-lg shadow-lg">
+          Item added to cart!
+        </div>
+      )}
+
+      {items.map((item, index) => (
         <div
-          key={item.card.info.id}
+          key={`${item.card.info.id}-${index}`} // Using a composite key
           className="p-2 m-2 border-gray-200 border-b-2 text-left flex justify-between"
         >
           <div className="w-9/12">
@@ -21,7 +50,10 @@ const ItemList = ({ items, dummy }) => {
           </div>
           <div className="w-3/12 p-4">
             <div className="absolute">
-              <button className="p-2 mx-16 rounded-lg bg-black text-white shadow-lg">
+              <button
+                className="p-2 mx-16 rounded-lg bg-black text-white shadow-lg cursor-pointer"
+                onClick={() => handleAddItem(item)}
+              >
                 Add +
               </button>
             </div>
@@ -32,4 +64,5 @@ const ItemList = ({ items, dummy }) => {
     </div>
   );
 };
+
 export default ItemList;
